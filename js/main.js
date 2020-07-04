@@ -38,4 +38,7 @@ function create () {
 }
 
 // executes on every frame
-function update () {}
+function update () {
+    ball.x += 1;
+    ball.y += 1;
+}
