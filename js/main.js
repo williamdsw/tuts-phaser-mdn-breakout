@@ -3,7 +3,8 @@
 // VARIABLES
 
 var canvasProperties = {
-    width: 480, height: 320
+    width: 480, height: 320,
+    backgroundColor: '#eee'
 };
 
 var game = new Phaser.Game (canvasProperties.width, canvasProperties.height, 
@@ -15,7 +16,12 @@ var game = new Phaser.Game (canvasProperties.width, canvasProperties.height,
 // FUNCTIONS
 
 // preloads the assets
-function preload () {}
+function preload () {
+    game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    game.scale.pageAlignHorizontally = true;
+    game.scale.pageAlignVertically = true;
+    game.stage.backgroundColor = canvasProperties.backgroundColor;
+}
 
 // executed once when everything is loaded and ready
 function create () {}
