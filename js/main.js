@@ -9,7 +9,8 @@ var canvasProperties = {
 
 var ballProperties = {
     x: 50, y: 50,
-    velocityX: 150, velocityY: 150
+    velocityX: 150, velocityY: 150,
+    bounciness: 1
 };
 
 var ball;
@@ -42,6 +43,8 @@ function create () {
 
     // enable physics for objects
     game.physics.enable (ball, Phaser.Physics.ARCADE);
+    ball.body.collideWorldBounds = true;
+    ball.body.bounce.set (ballProperties.bounciness);
     ball.body.velocity.set (ballProperties.velocityX, ballProperties.velocityY);
 }
 
