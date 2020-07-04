@@ -8,7 +8,8 @@ var canvasProperties = {
 };
 
 var ballProperties = {
-    x: 50, y: 50
+    x: 50, y: 50,
+    velocityX: 150, velocityY: 150
 };
 
 var ball;
@@ -34,11 +35,17 @@ function preload () {
 
 // executed once when everything is loaded and ready
 function create () {
+    game.physics.startSystem (Phaser.Physics.ARCADE);
+    
+    // loads sprites into objects at position
     ball = game.add.sprite (ballProperties.x, ballProperties.y, 'ball');
+
+    // enable physics for objects
+    game.physics.enable (ball, Phaser.Physics.ARCADE);
+    ball.body.velocity.set (ballProperties.velocityX, ballProperties.velocityY);
 }
 
 // executes on every frame
 function update () {
-    ball.x += 1;
-    ball.y += 1;
+  
 }
