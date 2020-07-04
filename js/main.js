@@ -7,6 +7,13 @@ var canvasProperties = {
     backgroundColor: '#eee'
 };
 
+var ballProperties = {
+    x: 50, y: 50
+};
+
+var ball;
+
+
 var game = new Phaser.Game (canvasProperties.width, canvasProperties.height, 
                             Phaser.CANVAS, null, {
                                 preload: preload, create: create, update: update 
@@ -21,10 +28,14 @@ function preload () {
     game.scale.pageAlignHorizontally = true;
     game.scale.pageAlignVertically = true;
     game.stage.backgroundColor = canvasProperties.backgroundColor;
+
+    game.load.image ('ball', 'sprites/ball.png');
 }
 
 // executed once when everything is loaded and ready
-function create () {}
+function create () {
+    ball = game.add.sprite (ballProperties.x, ballProperties.y, 'ball');
+}
 
 // executes on every frame
 function update () {}
