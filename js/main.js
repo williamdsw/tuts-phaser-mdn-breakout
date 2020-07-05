@@ -27,10 +27,19 @@ var bricksProperties = {
     anchor: 0.5
 };
 
+var scoreProperties = {
+    currentScore: 0,
+    x: 5, y: 5,
+    fontSize: '18px',
+    fontFamily: 'Arial',
+    color: '#0095DD'
+};
+
 var ball = null;
 var paddle = null;
 var bricks = [];
 var newBrick = null;
+var scoreText = null;
 
 var game = new Phaser.Game (canvasProperties.width, canvasProperties.height, 
                             Phaser.CANVAS, null, {
@@ -56,10 +65,17 @@ function preload () {
 function create () {
     game.physics.startSystem (Phaser.Physics.ARCADE);
     game.physics.arcade.checkCollision.down = false;
+    game.load.crossOrigin = 'Anonymous';
 
     setBallProperties ();
     setPaddleProperties ();
     initBricks ();
+
+    // won't work!
+    /*scoreText = game.add.text (scoreProperties.x, scoreProperties.y, 'Score: 0', {
+        font: `${scoreProperties.fontSize} ${scoreProperties.fontFamily}`, 
+        fill: scoreProperties.color
+    });*/
 }
 
 // executes on every frame
@@ -124,4 +140,7 @@ function initBricks () {
 
 function onBallHitBrick (ball, brick) {
     brick.kill ();
+    scoreProperties.currentScore += 10;
+    //scoreText.setText (`Score: ${scoreProperties.currentScore}`);
+    console.log ('Score: ', scoreProperties.currentScore);
 }
