@@ -39,6 +39,15 @@ var livesProperties = {
     currentLives: 3
 };
 
+var woobleSpritesheetProperties = {
+    path: 'sprites/wobble.png',
+    frame: {
+        width: 20, height: 20
+    },
+    sequence: [0, 1, 0, 2, 0, 1, 0, 2, 0],
+    fps: 24
+};
+
 var ball = null;
 var paddle = null;
 var bricks = [];
@@ -65,6 +74,7 @@ function preload () {
     game.load.image ('ball', 'sprites/ball.png');
     game.load.image ('paddle', 'sprites/paddle.png');
     game.load.image ('brick', 'sprites/brick.png');
+    game.load.spritesheet ('ball', woobleSpritesheetProperties.path, woobleSpritesheetProperties.frame.width, woobleSpritesheetProperties.frame.height);
 }
 
 // executed once when everything is loaded and ready
@@ -92,7 +102,7 @@ function create () {
 
 // executes on every frame
 function update () {
-    game.physics.arcade.collide (ball, paddle);
+    game.physics.arcade.collide (ball, paddle, onBallHitPaddle);
     game.physics.arcade.collide (ball, bricks, onBallHitBrick);
     paddle.x = game.input.x || (game.world.width * paddleProperties.x);
 }
@@ -102,6 +112,7 @@ function setBallProperties () {
     // sprites
     ball = game.add.sprite (game.world.width * ballProperties.x, game.world.height - ballProperties.y, 'ball');
     ball.anchor.set (ballProperties.anchor);
+    ball.animations.add ('wobble', woobleSpritesheetProperties.sequence, woobleSpritesheetProperties.fps);
 
     // physics
     game.physics.enable (ball, Phaser.Physics.ARCADE);
@@ -148,7 +159,8 @@ function initBricks () {
 }
 
 function onBallHitBrick (ball, brick) {
-    brick.kill ();
+    tweenBrickKill (brick);
+    ball.animations.play ('wobble');
     scoreProperties.currentScore += 10;
     //scoreText.setText (`Score: ${scoreProperties.currentScore}`);
     console.log ('Score: ', scoreProperties.currentScore);
@@ -164,6 +176,10 @@ function onBallHitBrick (ball, brick) {
         alert (`You won the game! Congratulations! Score: ${scoreProperties.currentScore}`);
         location.reload ();
     }
+}
+
+function onBallHitPaddle (ball, paddle) {
+    ball.animations.play ('wobble');
 }
 
 function onBallLeaveScreen () {
@@ -182,4 +198,13 @@ function onBallLeaveScreen () {
         alert ('You lost, game over!');
         location.reload ();
     }
+}
+
+function tweenBrickKill (brick) {
+    var tween = game.add.tween (brick.scale);
+    tween.to ({x: 0, y: 0}, 200, Phaser.Easing.Linear.None);
+    tween.onComplete.addOnce (function () {
+        brick.kill ();
+    }, this);
+    tween.start ();
 }
