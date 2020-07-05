@@ -44,6 +44,7 @@ function preload () {
 // executed once when everything is loaded and ready
 function create () {
     game.physics.startSystem (Phaser.Physics.ARCADE);
+    game.physics.arcade.checkCollision.down = false;
 
     setBallProperties ();
     setPaddleProperties ();
@@ -66,6 +67,12 @@ function setBallProperties () {
     ball.body.collideWorldBounds = true;
     ball.body.bounce.set (ballProperties.bounciness);
     ball.body.velocity.set (ballProperties.velocityX, ballProperties.velocityY);
+
+    ball.checkWorldBounds = true;
+    ball.events.onOutOfBounds.add (function () {
+        alert ('GAME OVER!');
+        location.reload ();
+    }, this);
 }
 
 function setPaddleProperties () {
