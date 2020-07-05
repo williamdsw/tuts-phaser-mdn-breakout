@@ -3,7 +3,7 @@
 // VARIABLES
 
 var canvasProperties = {
-    width: 600, height: 400,
+    width: 480, height: 320,
     backgroundColor: '#eee'
 };
 
@@ -19,8 +19,18 @@ var paddleProperties = {
     anchorX: 0.5, anchorY: 1
 };
 
-var ball;
-var paddle;
+var bricksProperties = {
+    width: 50, height: 20,
+    count: { row: 3, col: 7 },
+    offset: { top: 50, left: 60 },
+    padding: 10,
+    anchor: 0.5
+};
+
+var ball = null;
+var paddle = null;
+var bricks = [];
+var newBrick = null;
 
 var game = new Phaser.Game (canvasProperties.width, canvasProperties.height, 
                             Phaser.CANVAS, null, {
@@ -39,6 +49,7 @@ function preload () {
 
     game.load.image ('ball', 'sprites/ball.png');
     game.load.image ('paddle', 'sprites/paddle.png');
+    game.load.image ('brick', 'sprites/brick.png');
 }
 
 // executed once when everything is loaded and ready
@@ -48,6 +59,7 @@ function create () {
 
     setBallProperties ();
     setPaddleProperties ();
+    initBricks ();
 }
 
 // executes on every frame
@@ -84,4 +96,27 @@ function setPaddleProperties () {
     // physics
     game.physics.enable (paddle, Phaser.Physics.ARCADE);
     paddle.body.immovable = true;
+}
+
+function initBricks () {
+    bricks = game.add.group ();
+
+    for (var col = 0; col < bricksProperties.count.col; col++) {
+        for (var row = 0; row < bricksProperties.count.row; row++) {
+
+            // coordinates
+            var x = (col * (bricksProperties.width + bricksProperties.padding)) + bricksProperties.offset.left;
+            var y = (row * (bricksProperties.height + bricksProperties.padding)) + bricksProperties.offset.top;
+
+            // sprite
+            newBrick = game.add.sprite (x, y, 'brick');
+            newBrick.anchor.set (bricksProperties.anchor);
+
+            // physics
+            game.physics.enable (newBrick, Phaser.Physics.ARCADE);
+            newBrick.body.immovable = true;
+
+            bricks.add (newBrick);
+        }
+    }
 }
