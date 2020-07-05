@@ -65,6 +65,7 @@ function create () {
 // executes on every frame
 function update () {
     game.physics.arcade.collide (ball, paddle);
+    game.physics.arcade.collide (ball, bricks, onBallHitBrick);
     paddle.x = game.input.x || (game.world.width * paddleProperties.x);
 }
 
@@ -119,4 +120,8 @@ function initBricks () {
             bricks.add (newBrick);
         }
     }
+}
+
+function onBallHitBrick (ball, brick) {
+    brick.kill ();
 }
