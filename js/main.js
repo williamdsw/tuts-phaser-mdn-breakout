@@ -143,4 +143,16 @@ function onBallHitBrick (ball, brick) {
     scoreProperties.currentScore += 10;
     //scoreText.setText (`Score: ${scoreProperties.currentScore}`);
     console.log ('Score: ', scoreProperties.currentScore);
+
+    var numberOfCurrentBricks = 0;
+    for (var brick of bricks.children) {
+        if (brick.alive) {
+            numberOfCurrentBricks++;
+        }
+    }
+
+    if (numberOfCurrentBricks === 0) {
+        alert (`You won the game! Congratulations! Score: ${scoreProperties.currentScore}`);
+        location.reload ();
+    }
 }
