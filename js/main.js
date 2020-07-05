@@ -35,11 +35,17 @@ var scoreProperties = {
     color: '#0095DD'
 };
 
+var livesProperties = {
+    currentLives: 3
+};
+
 var ball = null;
 var paddle = null;
 var bricks = [];
 var newBrick = null;
 var scoreText = null;
+var livesText = null;
+var lifeLostText = null;
 
 var game = new Phaser.Game (canvasProperties.width, canvasProperties.height, 
                             Phaser.CANVAS, null, {
@@ -72,10 +78,16 @@ function create () {
     initBricks ();
 
     // won't work!
-    /*scoreText = game.add.text (scoreProperties.x, scoreProperties.y, 'Score: 0', {
+    /*
+    scoreText = game.add.text (scoreProperties.x, scoreProperties.y, 'Score: 0', {
         font: `${scoreProperties.fontSize} ${scoreProperties.fontFamily}`, 
         fill: scoreProperties.color
-    });*/
+    });
+    
+    // livesText...
+    // lifeLostText...
+    
+    */
 }
 
 // executes on every frame
@@ -98,10 +110,7 @@ function setBallProperties () {
     ball.body.velocity.set (ballProperties.velocityX, ballProperties.velocityY);
 
     ball.checkWorldBounds = true;
-    ball.events.onOutOfBounds.add (function () {
-        alert ('GAME OVER!');
-        location.reload ();
-    }, this);
+    ball.events.onOutOfBounds.add (onBallLeaveScreen, this);
 }
 
 function setPaddleProperties () {
@@ -153,6 +162,24 @@ function onBallHitBrick (ball, brick) {
 
     if (numberOfCurrentBricks === 0) {
         alert (`You won the game! Congratulations! Score: ${scoreProperties.currentScore}`);
+        location.reload ();
+    }
+}
+
+function onBallLeaveScreen () {
+    livesProperties.currentLives--;
+    if (livesProperties.currentLives) {
+        console.log ('RESET');
+
+        ball.reset (game.world.width * ballProperties.x, game.world.height - ballProperties.y);
+        paddle.reset (game.world.width * paddleProperties.x, game.world.height - paddleProperties.y);
+
+        game.input.onDown.addOnce (function () {
+            ball.body.velocity.set (ballProperties.velocityX, ballProperties.velocityY);
+        });
+    }
+    else {
+        alert ('You lost, game over!');
         location.reload ();
     }
 }
