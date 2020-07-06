@@ -48,6 +48,23 @@ var woobleSpritesheetProperties = {
     fps: 24
 };
 
+var buttonSpritesheetProperties = {
+    path: 'sprites/button.png',
+    frame: {
+        width: 120, height: 40
+    },
+    sequence: [0, 1, 0, 2, 0, 1, 0, 2, 0],
+    fps: 24
+};
+
+var buttonProperties = {
+    x: 0.5, y: 0.5,
+    graphicAssetName: 'button',
+    anchor: 0.5
+};
+
+var isGamePlaying = false;
+
 var ball = null;
 var paddle = null;
 var bricks = [];
@@ -55,6 +72,7 @@ var newBrick = null;
 var scoreText = null;
 var livesText = null;
 var lifeLostText = null;
+var startButton = null;
 
 var game = new Phaser.Game (canvasProperties.width, canvasProperties.height, 
                             Phaser.CANVAS, null, {
@@ -75,6 +93,7 @@ function preload () {
     game.load.image ('paddle', 'sprites/paddle.png');
     game.load.image ('brick', 'sprites/brick.png');
     game.load.spritesheet ('ball', woobleSpritesheetProperties.path, woobleSpritesheetProperties.frame.width, woobleSpritesheetProperties.frame.height);
+    game.load.spritesheet ('button', buttonSpritesheetProperties.path, buttonSpritesheetProperties.frame.width, buttonSpritesheetProperties.frame.height);
 }
 
 // executed once when everything is loaded and ready
@@ -86,6 +105,7 @@ function create () {
     setBallProperties ();
     setPaddleProperties ();
     initBricks ();
+    setStartButtonProperties ();
 
     // won't work!
     /*
@@ -102,9 +122,17 @@ function create () {
 
 // executes on every frame
 function update () {
-    game.physics.arcade.collide (ball, paddle, onBallHitPaddle);
-    game.physics.arcade.collide (ball, bricks, onBallHitBrick);
-    paddle.x = game.input.x || (game.world.width * paddleProperties.x);
+    if (isGamePlaying) {
+        game.physics.arcade.collide (ball, paddle, onBallHitPaddle);
+        game.physics.arcade.collide (ball, bricks, onBallHitBrick);
+        paddle.x = game.input.x || (game.world.width * paddleProperties.x);
+    }
+}
+
+function startGame () {
+    startButton.destroy ();
+    ball.body.velocity.set (ballProperties.velocityX, ballProperties.velocityY);
+    isGamePlaying = true;
 }
 
 function setBallProperties () {
@@ -118,7 +146,6 @@ function setBallProperties () {
     game.physics.enable (ball, Phaser.Physics.ARCADE);
     ball.body.collideWorldBounds = true;
     ball.body.bounce.set (ballProperties.bounciness);
-    ball.body.velocity.set (ballProperties.velocityX, ballProperties.velocityY);
 
     ball.checkWorldBounds = true;
     ball.events.onOutOfBounds.add (onBallLeaveScreen, this);
@@ -158,6 +185,11 @@ function initBricks () {
     }
 }
 
+function setStartButtonProperties () {
+    startButton = game.add.button (game.world.width * buttonProperties.x, game.world.height * buttonProperties.y, buttonProperties.graphicAssetName, startGame, this, 1, 0, 2);
+    startButton.anchor.set (buttonProperties.anchor);
+}
+
 function onBallHitBrick (ball, brick) {
     tweenBrickKill (brick);
     ball.animations.play ('wobble');
@@ -165,14 +197,7 @@ function onBallHitBrick (ball, brick) {
     //scoreText.setText (`Score: ${scoreProperties.currentScore}`);
     console.log ('Score: ', scoreProperties.currentScore);
 
-    var numberOfCurrentBricks = 0;
-    for (var brick of bricks.children) {
-        if (brick.alive) {
-            numberOfCurrentBricks++;
-        }
-    }
-
-    if (numberOfCurrentBricks === 0) {
+    if (scoreProperties.currentScore === (bricksProperties.count.row * bricksProperties.count.col) * 10) {
         alert (`You won the game! Congratulations! Score: ${scoreProperties.currentScore}`);
         location.reload ();
     }
