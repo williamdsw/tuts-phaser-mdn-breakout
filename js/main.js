@@ -64,6 +64,9 @@ var buttonProperties = {
 };
 
 var isGamePlaying = false;
+var backgroundColors = [
+    '#ff8769', '#8593ff', '#92db8f', '#eee', '#f7b7f2', '#ffffc4', '#d1a1ff'
+];
 
 var ball = null;
 var paddle = null;
@@ -194,6 +197,12 @@ function onBallHitBrick (ball, brick) {
     tweenBrickKill (brick);
     ball.animations.play ('wobble');
     scoreProperties.currentScore += 10;
+
+    // background color
+    var index = (Math.ceil (Math.random () * backgroundColors.length)) - 1;
+    console.log ('index', index);
+    game.stage.backgroundColor = backgroundColors[index];
+
     //scoreText.setText (`Score: ${scoreProperties.currentScore}`);
     console.log ('Score: ', scoreProperties.currentScore);
 
@@ -205,6 +214,7 @@ function onBallHitBrick (ball, brick) {
 
 function onBallHitPaddle (ball, paddle) {
     ball.animations.play ('wobble');
+    ball.body.velocity.x = (-1 * 5 * (paddle.x - ball.x));
 }
 
 function onBallLeaveScreen () {
